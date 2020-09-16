@@ -67,6 +67,11 @@ func ParseString(s string) (Color, error) {
 	}, nil
 }
 
+// ParseInt64 converts an int64 into a color. For example, 0xffffff
+func ParseInt64(i int64) (Color, error) {
+	return ParseString(strconv.FormatInt(i, hexBase))
+}
+
 func (color Color) String() string {
 	build := "#"
 	build += padString(strconv.FormatInt(int64(color.Red), 16), '0', 2)
@@ -97,4 +102,13 @@ func (color *Color) MarshalJSON() ([]byte, error) {
 func (color *Color) UnmarshalJSON(b []byte) (err error) {
 	*color, err = ParseString(string(b[1 : len(b)-1]))
 	return err
+}
+
+func (color *Color) MarshalText() ([]byte, error) {
+	return []byte(color.String()), nil
+}
+
+func (color *Color) UnmarshalText(d []byte) (err error) {
+	*color, err = ParseString(string(d))
+	return
 }
