@@ -53,3 +53,57 @@ func TestColor_String(t *testing.T) {
 		assert.Equal(t, "#ff000064", c.String())
 	})
 }
+
+func TestColor_MarshalJSON(t *testing.T) {
+	t.Run("rgb", func(t *testing.T) {
+		c := &Color{
+			Red:   255,
+			Green: 0,
+			Blue:  0,
+			Alpha: 255,
+		}
+		b, err := c.MarshalJSON()
+		assert.Nil(t, err)
+		assert.Equal(t, []byte("\"#ff0000\""), b)
+	})
+	t.Run("rgba", func(t *testing.T) {
+		c := &Color{
+			Red:   255,
+			Green: 0,
+			Blue:  0,
+			Alpha: 100,
+		}
+		b, err := c.MarshalJSON()
+		assert.Nil(t, err)
+		assert.Equal(t, []byte("\"#ff000064\""), b)
+	})
+}
+
+func TestColor_UnmarshalJSON(t *testing.T) {
+	t.Run("rgb", func(t *testing.T) {
+		b := []byte("\"#ff0000\"")
+		c := Color{}
+		exp := Color{
+			Red:   255,
+			Green: 0,
+			Blue:  0,
+			Alpha: 255,
+		}
+		err := c.UnmarshalJSON(b)
+		assert.Nil(t, err)
+		assert.True(t, c.Equal(exp))
+	})
+	t.Run("rgba", func(t *testing.T) {
+		b := []byte("\"#ff000064\"")
+		c := Color{}
+		exp := Color{
+			Red:   255,
+			Green: 0,
+			Blue:  0,
+			Alpha: 100,
+		}
+		err := c.UnmarshalJSON(b)
+		assert.Nil(t, err)
+		assert.True(t, c.Equal(exp))
+	})
+}
